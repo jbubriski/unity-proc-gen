@@ -115,10 +115,10 @@ public class LevelDirector4 : LevelDirectorBase
         {
             for (var j = 0; j < GridSize; j++)
             {
-                var perlin = Mathf.PerlinNoise((float)i / GridSize + perlinOffset.x, (float)j / GridSize + perlinOffset.y) * 100f;
+                var perlin = Mathf.PerlinNoise((float)i / 10 + perlinOffset.x, (float)j / 10 + perlinOffset.y) * 100f;
                 Debug.Log(perlin);
 
-                if (perlin > 25)
+                if (perlin > 20)
                 {
                     var newTile = (Transform)Instantiate(Tiles.RandomElement(), _floor);
                     newTile.position = new Vector3(i * TileSize - gridWidth / 2, 0, j * TileSize - gridWidth / 2);
