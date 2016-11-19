@@ -102,6 +102,63 @@ public class LevelDirector4 : LevelDirectorBase
         ClearChildren(_extras);
     }
 
+    public bool[][] CreateCircle(int radius, int gridSize)
+    {
+        var circleGrid = new bool[gridSize][];
+        
+        for (var i = 0; i < gridSize; i++)
+        {
+            circleGrid[i] = new bool[gridSize];
+        }
+        
+        var offset = 10;
+
+        var x = radius;
+        var y = 0;
+        var err = 0;
+
+        while (x >= y)
+        {
+            circleGrid[offset + x][offset + y] = true;
+            circleGrid[offset + y][offset + x] = true;
+            circleGrid[offset - y][offset + x] = true;
+            circleGrid[offset - x][offset + y] = true;
+            circleGrid[offset - x][offset - y] = true;
+            circleGrid[offset - y][offset - x] = true;
+            circleGrid[offset + y][offset - x] = true;
+            circleGrid[offset + x][offset - y] = true;
+
+            y += 1;
+            err += 1 + 2 * y;
+            if (2 * (err - x) + 1 > 0)
+            {
+                x -= 1;
+                err += 1 - 2 * x;
+            }
+        }
+
+        for (var i = 0; i < circleGrid.Length; i++)
+        {
+            var edgeFound = false;
+            var startOfEdge = 0;
+
+            for (var j = 0; j < circleGrid[i].Length; j++)
+            {
+                if (!edgeFound && circleGrid[i][j])
+                {
+                    edgeFound = true;
+                    startOfEdge = j;
+                }
+                else if (edgeFound && j < circleGrid[i].Length - startOfEdge)
+                {
+                    circleGrid[i][j] = true;
+                }
+            }
+        }
+
+        return circleGrid;
+    }
+
     public void SetupMap()
     {
         transform.Rotate(0, -45, 0);
@@ -111,10 +168,17 @@ public class LevelDirector4 : LevelDirectorBase
 
         var perlinOffset = new Vector2(Random.Range(0, 100), Random.Range(0, 100));
 
+        var circle = CreateCircle(9, GridSize);
+
         for (var i = 0; i < GridSize; i++)
         {
             for (var j = 0; j < GridSize; j++)
             {
+                if (!circle[i][j])
+                {
+                    continue;
+                }
+
                 var perlin = Mathf.PerlinNoise((float)i / 10 + perlinOffset.x, (float)j / 10 + perlinOffset.y) * 100f;
                 Debug.Log(perlin);
 
